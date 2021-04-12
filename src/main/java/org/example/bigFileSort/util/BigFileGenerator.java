@@ -19,33 +19,32 @@ public class BigFileGenerator {
 
     private static final int STR_MIN_LENGTH = 9;
     private static final int STR_MAX_LENGTH = 15;
-    private static final int STR_COUNT = 1_000_000;
-    private static final int STR_PER_ITERATION = 100_000;
+    private static final int STR_COUNT = 10_000_000;
+    private static final int STR_PER_ITERATION = 250_000;
 
     public static void main(String[] args) {
         long startTime = System.nanoTime();
 
-        generateFile(BIG_FILE_PATH, STR_COUNT, STR_MIN_LENGTH, STR_MAX_LENGTH);
+        File file = generateFile(BIG_FILE_PATH, STR_COUNT, STR_MIN_LENGTH, STR_MAX_LENGTH);
 
         long endTime = System.nanoTime();
         long totalTime = TimeUnit.NANOSECONDS.toSeconds(endTime - startTime);
 
-        log.info("Generation complete. Total time: {} seconds", totalTime);
+        log.info("Generation complete. Total time: {} seconds. File size: {} mb", totalTime, file.length() / (1024 * 1024));
     }
 
-    public static void generateFile(String filePath, int strCount, int strMinLength, int strMaxLength) {
+    public static File generateFile(String filePath, int strCount, int strMinLength, int strMaxLength) {
         File file = new File(filePath);
         if (file.exists()) {
             file.delete();
         }
         List<String> list;
         int linesToWrite = strCount;
-        log.info("Generating file with {} lines", strCount);
+        log.info("Generating file with {} lines...", String.format("%,d", strCount));
         while (linesToWrite > 0) {
             int stringNum = Math.min(STR_PER_ITERATION, linesToWrite);
             list = getRandomStringList(stringNum, strMinLength, strMaxLength);
-            try (FileWriter fw = new FileWriter(filePath, true);
-                 BufferedWriter bw = new BufferedWriter(fw)) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, true))) {
                 for (String str : list) {
                     bw.write(str);
                     bw.write("\r\n");
@@ -55,6 +54,7 @@ public class BigFileGenerator {
             }
             linesToWrite -= stringNum;
         }
+        return file;
     }
 
 }

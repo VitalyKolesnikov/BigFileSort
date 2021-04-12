@@ -42,7 +42,7 @@ public class FileSorter {
         log.info("Splitting the file...");
 
         List<File> tempFiles = new ArrayList<>();
-        try (RandomAccessFile file = new RandomAccessFile(filePath, "r")) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath)))) {
             String str;
             int fileNum = 1;
             int currentLine = 0;
@@ -51,7 +51,7 @@ public class FileSorter {
             File dir = new File(tempFolderPath);
             dir.mkdir();
 
-            while ((str = file.readLine()) != null) {
+            while ((str = br.readLine()) != null) {
                 list.add(str);
                 currentLine++;
                 if (currentLine == maxLines) {
