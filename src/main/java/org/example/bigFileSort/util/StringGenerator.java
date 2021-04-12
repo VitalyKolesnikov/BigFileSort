@@ -9,7 +9,7 @@ public class StringGenerator {
     private static final int LEFT_LIMIT = 97; // 'a'
     private static final int RIGHT_LIMIT = 122; // 'z'
 
-    public List<String> getRandomStringList(int count, int minLength, int maxLength) {
+    public static List<String> getRandomStringList(int count, int minLength, int maxLength) {
         List<String> list = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             list.add(generateString(minLength, maxLength));
@@ -17,7 +17,7 @@ public class StringGenerator {
         return list;
     }
 
-    private String generateString(int minLength, int maxLength) {
+    private static String generateString(int minLength, int maxLength) {
         int length = getRandomNumber(minLength, maxLength);
         Random random = new Random();
         StringBuilder builder = new StringBuilder(length);
@@ -33,7 +33,7 @@ public class StringGenerator {
         return builder.toString();
     }
 
-    private int getRandomNumber(int min, int max) {
+    private static int getRandomNumber(int min, int max) {
         return (int) ((Math.random() * (max - min)) + min);
     }
 

@@ -33,11 +33,14 @@ public class FileSorter {
 
     public static void sortBigFile(String filePath) {
         List<File> tempFiles = splitFile(filePath, TEMP_FOLDER, MAX_LINES);
+        log.info("Sorting temp files...");
         tempFiles.forEach(FileSorter::sortFileInMemory);
         mergeFiles(tempFiles, filePath);
     }
 
     public static List<File> splitFile(String filePath, String tempFolderPath, int maxLines) {
+        log.info("Splitting the file...");
+
         List<File> tempFiles = new ArrayList<>();
         try (RandomAccessFile file = new RandomAccessFile(filePath, "r")) {
             String str;
@@ -65,7 +68,10 @@ public class FileSorter {
             e.printStackTrace();
         }
 
-        new File(filePath).delete();
+        File file = new File(filePath);
+        file.delete();
+
+        log.info("Splitting complete. Total temp files: {}", tempFiles.size());
         return tempFiles;
     }
 
@@ -76,6 +82,8 @@ public class FileSorter {
     }
 
     private static void mergeFiles(List<File> tempFiles, String resultFilePath) {
+        log.info("Merging sorted temp files...");
+
         TreeMap<String, BufferedReader> map = new TreeMap<>();
         try (FileWriter fw = new FileWriter(resultFilePath, true);
              BufferedWriter bw = new BufferedWriter(fw)) {
@@ -102,4 +110,5 @@ public class FileSorter {
             dir.delete();
         }
     }
+
 }

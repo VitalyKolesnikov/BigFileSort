@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.example.bigFileSort.FileSorter.BIG_FILE_PATH;
+import static org.example.bigFileSort.util.StringGenerator.getRandomStringList;
 
 public class BigFileGenerator {
 
@@ -18,21 +19,32 @@ public class BigFileGenerator {
 
     private static final int STR_MIN_LENGTH = 9;
     private static final int STR_MAX_LENGTH = 15;
-    private static final int STR_COUNT = 100_000;
-    private static final int MULTIPLIER = 10;
+    private static final int STR_COUNT = 1_000_000;
+    private static final int STR_PER_ITERATION = 100_000;
 
     public static void main(String[] args) {
-        new File(BIG_FILE_PATH).delete();
-
         long startTime = System.nanoTime();
 
-        StringGenerator generator = new StringGenerator();
-        List<String> list;
+        generateFile(BIG_FILE_PATH, STR_COUNT, STR_MIN_LENGTH, STR_MAX_LENGTH);
 
-        log.info("Generating file with {} lines", STR_COUNT * MULTIPLIER);
-        for (int i = 0; i < MULTIPLIER; i++) {
-            list = generator.getRandomStringList(STR_COUNT, STR_MIN_LENGTH, STR_MAX_LENGTH);
-            try (FileWriter fw = new FileWriter(BIG_FILE_PATH, true);
+        long endTime = System.nanoTime();
+        long totalTime = TimeUnit.NANOSECONDS.toSeconds(endTime - startTime);
+
+        log.info("Generation complete. Total time: {} seconds", totalTime);
+    }
+
+    public static void generateFile(String filePath, int strCount, int strMinLength, int strMaxLength) {
+        File file = new File(filePath);
+        if (file.exists()) {
+            file.delete();
+        }
+        List<String> list;
+        int linesToWrite = strCount;
+        log.info("Generating file with {} lines", strCount);
+        while (linesToWrite > 0) {
+            int stringNum = Math.min(STR_PER_ITERATION, linesToWrite);
+            list = getRandomStringList(stringNum, strMinLength, strMaxLength);
+            try (FileWriter fw = new FileWriter(filePath, true);
                  BufferedWriter bw = new BufferedWriter(fw)) {
                 for (String str : list) {
                     bw.write(str);
@@ -41,12 +53,8 @@ public class BigFileGenerator {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            linesToWrite -= stringNum;
         }
-
-        long endTime = System.nanoTime();
-        long totalTime = TimeUnit.NANOSECONDS.toSeconds(endTime - startTime);
-
-        log.info("Generation complete. Total time: {} seconds", totalTime);
     }
 
 }
