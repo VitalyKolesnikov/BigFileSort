@@ -1,6 +1,5 @@
 package org.example.bigFileSort;
 
-import org.example.bigFileSort.util.BigFileGenerator;
 import org.example.bigFileSort.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,25 +13,22 @@ import static org.example.bigFileSort.util.FileUtils.readAllStringsFromFile;
 
 public class FileSorter {
 
-    private static final Logger log = LoggerFactory.getLogger(BigFileGenerator.class);
+    private static final Logger log = LoggerFactory.getLogger(FileSorter.class);
 
     public static final String BIG_FILE_PATH = "src/main/resources/big_file.txt";
-    public static final String TEMP_FOLDER = "src/main/resources/temp";
+    public static final String TEMP_FOLDER_PATH = "src/main/resources/temp";
     public static final int MAX_LINES = 100_000;
 
     public static void main(String[] args) {
         long startTime = System.nanoTime();
-
         sortBigFile(BIG_FILE_PATH);
-
         long endTime = System.nanoTime();
         long totalTime = TimeUnit.NANOSECONDS.toSeconds(endTime - startTime);
-
         log.info("Sorting complete. Total time: {} seconds", totalTime);
     }
 
     public static void sortBigFile(String filePath) {
-        List<File> tempFiles = splitFile(filePath, TEMP_FOLDER, MAX_LINES);
+        List<File> tempFiles = splitFile(filePath, TEMP_FOLDER_PATH, MAX_LINES);
         log.info("Sorting temp files...");
         tempFiles.forEach(FileSorter::sortFileInMemory);
         mergeFiles(tempFiles, filePath);

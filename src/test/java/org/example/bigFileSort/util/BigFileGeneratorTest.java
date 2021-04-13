@@ -1,7 +1,6 @@
 package org.example.bigFileSort.util;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -17,18 +16,10 @@ class BigFileGeneratorTest {
 
     public static final String BIG_FILE_PATH = "src/test/resources/big_file.txt";
 
-    @BeforeEach
-    void setUp() {
-        File dir = new File("src/test/resources");
-        dir.mkdir();
-    }
-
     @AfterEach
     void tearDown() {
         File file = new File(BIG_FILE_PATH);
         file.delete();
-        File dir = new File("src/test/resources");
-        dir.delete();
     }
 
     @Test
