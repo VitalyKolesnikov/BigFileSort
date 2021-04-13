@@ -1,10 +1,10 @@
 # Task
 
-Implement sorting of big text file which does not fit into RAM.
+Implement sorting of big text file which does not fit in RAM.
 
 Required memory should not depend on file size.
 
-One line in file is much smaller that memory size.
+One line in file is much smaller than memory size.
 
 To test the program also implement big files generator which gets lines count and their MAX length as parameters.
 
@@ -18,7 +18,10 @@ Class BigFileGenerator (a.k.a. BFG :) has main method to generate a big file.
 
 Class FileSorter has main method to sort the big file.
 
+---
+
 # Performance tests
+
 Tested on my Intel Core i7-7700 CPU and SSD drive.
 
 JVM maximum heap size was limited to 1024 Mb.
