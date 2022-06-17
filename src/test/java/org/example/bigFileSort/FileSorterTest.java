@@ -21,7 +21,7 @@ class FileSorterTest {
     }
 
     @Test
-    void sortFile() {
+    void sortFile() throws InterruptedException {
         File expected = new File(BIG_FILE_SORTED_PATH);
         File actual = new File(BIG_FILE_PATH);
         List<String> list = new ArrayList<>();

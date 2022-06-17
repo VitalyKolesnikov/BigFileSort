@@ -6,7 +6,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static org.example.bigFileSort.util.FileUtils.newTempFile;
 import static org.example.bigFileSort.util.FileUtils.readAllStringsFromFile;
@@ -19,7 +22,7 @@ public class FileSorter {
     public static final String TEMP_FOLDER_PATH = "src/main/resources/temp";
     public static final int MAX_LINES = 100_000;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         long startTime = System.nanoTime();
         sortBigFile(BIG_FILE_PATH);
         long endTime = System.nanoTime();
@@ -27,14 +30,28 @@ public class FileSorter {
         log.info("Sorting complete. Total time: {} seconds", totalTime);
     }
 
-    public static void sortBigFile(String filePath) {
+    static void sortBigFile(String filePath) throws InterruptedException {
         List<File> tempFiles = splitFile(filePath, TEMP_FOLDER_PATH, MAX_LINES);
+
         log.info("Sorting temp files...");
-        tempFiles.forEach(FileSorter::sortFileInMemory);
+        List<Callable<Void>> tasks = createSortingTasks(tempFiles);
+        var executorService = Executors.newCachedThreadPool();
+        executorService.invokeAll(tasks);
+        executorService.shutdown();
+
         mergeFiles(tempFiles, filePath);
     }
 
-    public static List<File> splitFile(String filePath, String tempFolderPath, int maxLines) {
+    private static List<Callable<Void>> createSortingTasks(List<File> tempFiles) {
+        return tempFiles.stream()
+                .map(file -> (Callable<Void>) () -> {
+                    sortFileInMemory(file);
+                    return null;
+                })
+                .collect(Collectors.toList());
+    }
+
+    private static List<File> splitFile(String filePath, String tempFolderPath, int maxLines) {
         log.info("Splitting the file...");
 
         List<File> tempFiles = new ArrayList<>();

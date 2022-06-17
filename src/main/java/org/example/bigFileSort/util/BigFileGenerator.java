@@ -38,7 +38,7 @@ public class BigFileGenerator {
         }
         List<String> linesBuffer;
         int linesLeft = strCount;
-        log.info("Generating file with {} lines...", String.format("%,d", strCount));
+        log.info("Generating a file with {} lines...", String.format("%,d", strCount));
         while (linesLeft > 0) {
             int bufferSize = Math.min(MAX_LINES, linesLeft);
             linesBuffer = getRandomStringList(bufferSize, strMinLength, strMaxLength);
